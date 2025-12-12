@@ -1,13 +1,51 @@
 "use client";
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
-// remove export const revalidate = 0;
 
 import { Suspense, useEffect, useState } from "react";
 import { account } from "@/lib/appwrite";
 import { useRouter, useSearchParams } from "next/navigation";
 
-// ✅ Wrapper (required by Next.js 16 for useSearchParams)
+// Modal Component
+function Modal({
+  isOpen,
+  onClose,
+  title = "Notification",
+  message,
+  type = "info",
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  message: string;
+  type?: "success" | "error" | "info";
+}) {
+  if (!isOpen) return null;
+
+  const color =
+    type === "success"
+      ? "text-green-600"
+      : type === "error"
+      ? "text-red-600"
+      : "text-[#800000]";
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-white/40 bg-blur-sm z-50">
+      <div className="bg-white rounded-xl shadow-2xl p-6 w-96 text-center border border-gray-200">
+        <h2 className={`text-xl font-semibold mb-3 ${color}`}>{title}</h2>
+        <p className="text-gray-700 mb-5">{message}</p>
+        <button
+          onClick={onClose}
+          className="w-full bg-[#800000] text-white py-2 rounded hover:bg-[#600000] transition"
+        >
+          OK
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ✅ Wrapper (for Next.js 16 Suspense)
 export default function ForgotPasswordPageWrapper() {
   return (
     <Suspense
@@ -32,6 +70,13 @@ function ForgotPasswordPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // Modal State
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalType, setModalType] = useState<"success" | "error" | "info">(
+    "info"
+  );
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -52,25 +97,37 @@ function ForgotPasswordPage() {
         email,
         `${window.location.origin}/forgot-password`
       );
-      alert("Password reset link sent! Please check your inbox.");
+      setModalMessage("Password reset link sent! Please check your inbox.");
+      setModalType("success");
+      setModalOpen(true);
     } catch (error: any) {
-      alert(error.message || "Failed to send reset link.");
+      setModalMessage(error.message || "Failed to send reset link.");
+      setModalType("error");
+      setModalOpen(true);
     }
   };
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId || !secret) {
-      alert("Invalid or expired password reset link.");
+      setModalMessage("Invalid or expired password reset link.");
+      setModalType("error");
+      setModalOpen(true);
       return;
     }
 
     try {
       await account.updateRecovery(userId, secret, password);
-      alert("Password updated successfully!");
-      router.push("/authentication");
+      setModalMessage("Password updated successfully!");
+      setModalType("success");
+      setModalOpen(true);
+
+      // Redirect to login page after closing modal
+      setTimeout(() => router.push("/authentication"), 2500);
     } catch (error: any) {
-      alert(error.message || "Failed to update password.");
+      setModalMessage(error.message || "Failed to update password.");
+      setModalType("error");
+      setModalOpen(true);
     }
   };
 
@@ -126,6 +183,14 @@ function ForgotPasswordPage() {
           </>
         )}
       </div>
+
+      {/* ✅ Modal */}
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        message={modalMessage}
+        type={modalType}
+      />
     </main>
   );
 }

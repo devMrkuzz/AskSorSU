@@ -34,16 +34,15 @@ export default function Modal({
       : "text-[#800000]";
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-      \
-      <div className="bg-white rounded-xl shadow-xl p-6 w-96 relative">
+    <div className="fixed inset-0 flex items-center justify-center bg-white/40 backdrop-blur-sm z-50">
+      <div className="bg-white rounded-xl shadow-2xl p-6 w-96 text-center border border-gray-200">
         <h2 className={`text-xl font-semibold mb-3 ${color}`}>{title}</h2>
         <p className="text-gray-700 mb-5">{message}</p>
         <button
           onClick={onClose}
-          className="w-ful bg-[#800000] text-white py-2 rounded hover:bg-[600000] transition absolute"
+          className="w-full bg-[#800000] text-white py-2 rounded hover:bg-[#600000] transition"
         >
-          Ok
+          OK
         </button>
       </div>
     </div>
