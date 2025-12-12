@@ -4,7 +4,7 @@ import { account } from "@/lib/appwrite";
 export default function AuthenticationPage() {
   const handleGoogleSignIn = () => {
     account.createOAuth2Session(
-      "google",
+      "google" as any, // or as OAuthProvider
       "http://localhost:3000/dashboard",
       "http://localhost:3000/authentication"
     );

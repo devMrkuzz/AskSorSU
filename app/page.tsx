@@ -3,7 +3,7 @@
 import FooterSection from "@/components/FooterSection";
 import LimitationsSection from "@/components/LimitationSection";
 import MethodsSection from "@/components/MethodSection";
-import { Navigation } from "@/components/navigation";
+import { Navigation } from "@/components/Navigation";
 import TrainingProcess from "@/components/TrainingProgress";
 import { motion } from "framer-motion";
 import { useState, type ReactNode } from "react";

@@ -1,114 +1,89 @@
-"use client";
-
-import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
-
-export function Navigation() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
+export default function TrainingProcess() {
   return (
-    <nav className="fixed top-0 w-full z-50 animate-fadeIn">
-      {/* Main Navigation Bar */}
-      <div className="bg-[#800000] text-white px-4 py-4 shadow-lg">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between">
-            {/* Left Side - University Name */}
-            <div className="hidden md:block flex-1">
-              <h1 className="text-3xl font-bold text-white animate-slideDown whitespace-nowrap">
-                Sorsogon State University
-              </h1>
+    <section className="py-20 bg-white">
+      <div className="max-w-6xl mx-auto px-6">
+        <h2 className="text-4xl font-bold text-center mb-16 text-[#800000]">
+          How AskSorSU is Trained
+        </h2>
+
+        <div className="grid md:grid-cols-3 gap-10">
+          {/* Step 1 */}
+          <div className="border-l-4 border-[#800000] pl-6">
+            <h3 className="text-xl font-bold mb-4">Step 1</h3>
+            <h4 className="text-2xl font-semibold mb-4">
+              Collect demonstration data and train a supervised policy.
+            </h4>
+
+            <p className="text-lg text-gray-700 mb-6">
+              A prompt is sampled from the training dataset. Human labelers
+              demonstrate the correct or preferred output.
+            </p>
+
+            <div className="text-lg p-4 rounded-xl bg-gray-100 mb-4">
+              <p className="font-semibold mb-2 text-gray-800">
+                Example Prompt:
+              </p>
+              <p className="text-lg text-gray-700">
+                “Explain reinforcement learning to a 6-year-old.”
+              </p>
             </div>
 
-            {/* Center - Logo */}
-            <div className="flex-1 flex justify-center">
-              <div className="w-14 h-14 relative animate-slideDown">
-                <Image
-                  src="/SSU.png"
-                  alt="SSU Logo"
-                  width={56}
-                  height={56}
-                  className="object-contain"
-                />
-              </div>
-            </div>
-
-            {/* Right Side - Desktop Links and Button */}
-            <div className="hidden md:flex flex-1 items-center justify-end gap-8">
-              <div className="flex items-center gap-8">
-                {/* Navigation Links */}
-                <Link
-                  href="#about"
-                  className="text-white text-xl hover:bg-white hover:text-[#800000] px-4 py-2 rounded transition-all duration-300 transform hover:scale-105 animate-slideDown"
-                >
-                  About
-                </Link>
-
-                <Link
-                  href="#features"
-                  className="text-white text-xl hover:bg-white hover:text-[#800000] px-4 py-2 rounded transition-all duration-300 transform hover:scale-105 animate-slideDown"
-                >
-                  Features
-                </Link>
-              </div>
-
-              {/* Get Started Button */}
-              <Link
-                href="/auth"
-                className="bg-white text-[#800000] px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 text-center whitespace-nowrap"
-                onClick={() => setIsOpen(false)}
-              >
-                Get Started
-              </Link>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={toggleMenu}
-              className="md:hidden text-white hover:text-gray-200 transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
+            <p className="text-lg text-gray-700">
+              This supervised data is used to fine-tune the base model.
+            </p>
           </div>
 
-          {/* Mobile Menu */}
-          {isOpen && (
-            <div className="md:hidden mt-4 pb-4 border-t border-gray-400 animate-slideDown">
-              <div className="flex flex-col gap-4 pt-4">
-                <Link
-                  href="https://sorsu.edu.ph/about-sorsogon-state-university/"
-                  className="text-white text-lg hover:bg-white hover:text-[#800000] px-4 py-3 rounded transition-all duration-300 block"
-                  onClick={() => setIsOpen(false)}
-                >
-                  About
-                </Link>
+          {/* Step 2 */}
+          <div className="border-l-4 border-[#800000] pl-6">
+            <h3 className="text-xl font-bold mb-4">Step 2</h3>
+            <h4 className="text-2xl font-semibold mb-4">
+              Collect comparison data and train a reward model.
+            </h4>
 
-                <Link
-                  href="#features"
-                  className="text-white text-lg hover:bg-white hover:text-[#800000] px-4 py-3 rounded transition-all duration-300 block"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Features
-                </Link>
-                <Link
-                  href="/auth"
-                  className="bg-white text-[#800000] px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 text-center"
-                  target="_blank"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Get Started
-                </Link>
-              </div>
+            <p className="text-lg text-gray-700 mb-6">
+              Several model outputs are generated for the same prompt. Human
+              labelers rank them from best to worst.
+            </p>
+
+            <div className="text-lg p-4 rounded-xl bg-gray-100 mb-4">
+              <p className="font-semibold text-gray-800 mb-2">
+                Example Ranking:
+              </p>
+              <p className="text-gray-700">D ＞ C ＞ A ＞ B</p>
             </div>
-          )}
+
+            <p className="text-lg text-gray-700">
+              The rankings are used to train a reward model that scores future
+              outputs.
+            </p>
+          </div>
+
+          {/* Step 3 */}
+          <div className="border-l-4 border-[#800000] pl-6">
+            <h3 className="text-xl font-bold mb-4">Step 3</h3>
+            <h4 className="text-2xl font-semibold mb-4">
+              Optimize the model using PPO reinforcement learning.
+            </h4>
+
+            <p className="text-lg text-gray-700 mb-6">
+              A new prompt is sampled. The model generates an answer. The reward
+              model scores the output, and PPO adjusts the model to improve
+              future responses.
+            </p>
+
+            <div className="text-lg p-4 rounded-xl bg-gray-100 mb-4">
+              <p className="font-semibold text-gray-800 mb-2">
+                Example Prompt:
+              </p>
+              <p className="text-gray-700">“Write a story about otters.”</p>
+            </div>
+
+            <p className="text-lg text-gray-700">
+              This loop continues, improving the policy step-by-step.
+            </p>
+          </div>
         </div>
       </div>
-    </nav>
+    </section>
   );
 }
