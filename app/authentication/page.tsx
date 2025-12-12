@@ -130,7 +130,7 @@ export default function AuthenticationPage() {
             <input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder="you@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border rounded px-3 py-2"

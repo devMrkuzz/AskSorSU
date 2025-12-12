@@ -88,7 +88,7 @@ function ForgotPasswordPage() {
             <form onSubmit={handleRequestReset} className="space-y-4">
               <input
                 type="email"
-                placeholder="you@example.com"
+                placeholder="you@email.com"
                 className="w-full border px-3 py-2 rounded focus:ring-2 focus:ring-[#800000]"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
