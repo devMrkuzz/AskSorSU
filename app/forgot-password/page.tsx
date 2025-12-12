@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 
 import { useState, useEffect } from "react";
 import { account } from "@/lib/appwrite";
@@ -13,13 +14,10 @@ export default function ForgotPasswordPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // ✅ Wrap useSearchParams inside useEffect to avoid SSR error
   useEffect(() => {
     if (typeof window === "undefined") return;
-
     const id = searchParams.get("userId") || "";
     const s = searchParams.get("secret") || "";
-
     if (id && s) {
       setMode("reset");
       setUserId(id);
@@ -27,13 +25,11 @@ export default function ForgotPasswordPage() {
     }
   }, [searchParams]);
 
-  // Request password reset email
   const handleRequestReset = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await account.createRecovery(
         email,
-        // ✅ Use production-safe base URL (auto works on Vercel)
         `${window.location.origin}/forgot-password`
       );
       alert("Password reset email sent! Please check your inbox.");
@@ -42,14 +38,12 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  // Perform password update
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId || !secret) return alert("Invalid or expired password link.");
-
     try {
       await account.updateRecovery(userId, secret, password);
-      alert("Password updated successfully! Please log in again.");
+      alert("Password updated successfully!");
       router.push("/authentication");
     } catch (error: any) {
       alert(error.message || "Failed to update password.");
