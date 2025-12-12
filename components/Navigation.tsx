@@ -59,7 +59,7 @@ export function Navigation() {
 
               {/* Get Started Button */}
               <Link
-                href="/auth"
+                href="/authentication"
                 className="bg-white text-[#800000] px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 text-center whitespace-nowrap"
                 onClick={() => setIsOpen(false)}
               >
@@ -97,7 +97,7 @@ export function Navigation() {
                   Features
                 </Link>
                 <Link
-                  href="/auth"
+                  href="/authentication"
                   className="bg-white text-[#800000] px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 text-center"
                   target="_blank"
                   onClick={() => setIsOpen(false)}
