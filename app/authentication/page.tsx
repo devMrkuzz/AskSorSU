@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { account } from "@/lib/appwrite";
 import { useRouter } from "next/navigation";
 
@@ -12,11 +12,32 @@ export default function AuthenticationPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Login handler
+  // ✅ Automatically redirect if already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        await account.getSession("current");
+        router.push("/dashboard");
+      } catch {
+        // no session, stay on login
+      }
+    };
+    checkSession();
+  }, [router]);
+
+  // ✅ Login handler with session cleanup
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
     try {
+      // Delete any existing session before login
+      try {
+        await account.deleteSession("current");
+      } catch {
+        // ignore if none
+      }
+
       await account.createEmailPasswordSession(email, password);
       router.push("/dashboard");
     } catch (err: any) {
@@ -26,7 +47,7 @@ export default function AuthenticationPage() {
     }
   };
 
-  // Registration handler
+  // ✅ Registration handler
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -41,7 +62,7 @@ export default function AuthenticationPage() {
     }
   };
 
-  // Forgot password
+  // ✅ Forgot password handler
   const handleForgotPassword = async () => {
     if (!email) return alert("Please enter your email first.");
     try {
@@ -55,12 +76,17 @@ export default function AuthenticationPage() {
     }
   };
 
-  // Google Sign-In
-  const handleGoogleSignin = () => {
+  // ✅ Google Sign-In (safe session cleanup)
+  const handleGoogleSignin = async () => {
+    try {
+      await account.deleteSession("current");
+    } catch {
+      // ignore if none
+    }
     account.createOAuth2Session(
       "google" as any,
-      "http://localhost:3000/dashboard",
-      "http://localhost:3000/authentication"
+      "http://localhost:3000/dashboard", // success redirect
+      "http://localhost:3000/authentication" // failure redirect
     );
   };
 

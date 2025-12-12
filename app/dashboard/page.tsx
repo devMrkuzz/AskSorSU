@@ -1,42 +1,41 @@
 "use client";
-import { useEffect, useState } from "react";
-import { account } from "@/lib/appwrite";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import ChatArea from "./components/ChatArea";
+import MessageInput from "./components/MessageInput";
 
-export default function Dashboard() {
-  const [user, setUser] = useState<any>(null);
-  const router = useRouter();
+type Message = {
+  role: "user" | "assistant";
+  content: string;
+};
 
-  useEffect(() => {
-    account
-      .get()
-      .then((res) => setUser(res))
-      .catch(() => router.push("/authentication"));
-  }, [router]);
+export default function DashboardPage() {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: "assistant",
+      content:
+        "Hi there! I’m AskSorSU — your campus registrar assistant. How can I help today?",
+    },
+  ]);
 
-  const handleLogout = async () => {
-    await account.deleteSession("current");
-    router.push("/authentication");
+  const handleSend = async (text: string) => {
+    setMessages((prev) => [...prev, { role: "user", content: text }]);
+
+    // Simulate bot response
+    setTimeout(() => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: `You said: "${text}". I’ll assist you with that shortly.`,
+        },
+      ]);
+    }, 800);
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-white text-slate-800">
-      {user ? (
-        <>
-          <h1 className="text-2xl font-semibold mb-3">
-            Welcome, {user.name || user.email}
-          </h1>
-          <p className="mb-6">You are logged in via Appwrite.</p>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-[#800000] text-white rounded hover:bg-[#5a0000]"
-          >
-            Logout
-          </button>
-        </>
-      ) : (
-        <p>Loading...</p>
-      )}
-    </main>
+    <div className="flex flex-col h-full">
+      <ChatArea messages={messages} />
+      <MessageInput onSend={handleSend} />
+    </div>
   );
 }
