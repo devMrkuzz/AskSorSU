@@ -85,8 +85,8 @@ export default function AuthenticationPage() {
     }
     account.createOAuth2Session(
       "google" as any,
-      "http://localhost:3000/dashboard", // success redirect
-      "http://localhost:3000/authentication" // failure redirect
+      "https://ask-sor-1i68izwp4-send2hiremark-4461s-projects.vercel.app/dashboard",
+      "https://ask-sor-1i68izwp4-send2hiremark-4461s-projects.vercel.app/authentication"
     );
   };
 
