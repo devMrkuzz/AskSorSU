@@ -2,57 +2,70 @@
 
 import { useState, useEffect } from "react";
 import { account } from "@/lib/appwrite";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mode, setMode] = useState<"request" | "reset">("request");
-  const searchParams = useSearchParams();
+  const [userId, setUserId] = useState("");
+  const [secret, setSecret] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
 
+  // ✅ Wrap useSearchParams inside useEffect to avoid SSR error
   useEffect(() => {
-    // Detect if this is a password reset link (has userId + secret)
-    const userId = searchParams.get("userId");
-    const secret = searchParams.get("secret");
-    if (userId && secret) setMode("reset");
+    if (typeof window === "undefined") return;
+
+    const id = searchParams.get("userId") || "";
+    const s = searchParams.get("secret") || "";
+
+    if (id && s) {
+      setMode("reset");
+      setUserId(id);
+      setSecret(s);
+    }
   }, [searchParams]);
 
+  // Request password reset email
   const handleRequestReset = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await account.createRecovery(
         email,
-        "http://localhost:3000/forgot-password"
+        // ✅ Use production-safe base URL (auto works on Vercel)
+        `${window.location.origin}/forgot-password`
       );
-      alert("Password reset email sent! Check your inbox.");
+      alert("Password reset email sent! Please check your inbox.");
     } catch (error: any) {
-      alert(error.message);
+      alert(error.message || "Failed to send reset link.");
     }
   };
 
+  // Perform password update
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    const userId = searchParams.get("userId")!;
-    const secret = searchParams.get("secret")!;
+    if (!userId || !secret) return alert("Invalid or expired password link.");
 
     try {
       await account.updateRecovery(userId, secret, password);
-      alert("Password updated successfully!");
+      alert("Password updated successfully! Please log in again.");
       router.push("/authentication");
     } catch (error: any) {
-      alert(error.message);
+      alert(error.message || "Failed to update password.");
     }
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background px-4">
+    <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md border rounded-lg p-6 shadow bg-white">
         {mode === "request" ? (
           <>
-            <h1 className="text-2xl font-semibold mb-4">Forgot Password</h1>
-            <p className="text-sm mb-4">
-              Enter your email and we will send you a password reset link.
+            <h1 className="text-2xl font-semibold mb-4 text-[#800000]">
+              Forgot Password
+            </h1>
+            <p className="text-sm mb-4 text-gray-600">
+              Enter your email and we’ll send you a password reset link.
             </p>
             <form onSubmit={handleRequestReset} className="space-y-4">
               <input
