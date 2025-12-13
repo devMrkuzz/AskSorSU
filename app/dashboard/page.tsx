@@ -2,7 +2,6 @@
 import { useState } from "react";
 import ChatArea from "./components/ChatArea";
 import MessageInput from "./components/MessageInput";
-import Topbar from "./components/Topbar";
 
 type Message = {
   role: "user" | "assistant";
@@ -35,7 +34,6 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <Topbar />
       <ChatArea messages={messages} />
       <MessageInput onSend={handleSend} />
     </div>
