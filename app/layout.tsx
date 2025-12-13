@@ -11,9 +11,6 @@ export const metadata: Metadata = {
   title: "Introducing AskSorSU | Your AI-Powered Campus Companion",
   description:
     "Sorsogon State University - Empowering minds, shaping futures. Excellence in education and innovation.",
-  icons: {
-    icon: "/SSU.png",
-  },
 };
 
 export default function RootLayout({

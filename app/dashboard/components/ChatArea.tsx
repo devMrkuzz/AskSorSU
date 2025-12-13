@@ -14,7 +14,7 @@ export default function ChatArea({ messages }: { messages: Message[] }) {
   }, [messages]);
 
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#F7F7F8]">
+    <div className="flex-1 overflow-y-auto px-4 py-6 bg-[#F7F7F8] space-y-6">
       {messages.map((msg, i) => (
         <div
           key={i}
@@ -23,17 +23,17 @@ export default function ChatArea({ messages }: { messages: Message[] }) {
           }`}
         >
           <div
-            className={`max-w-[75%] px-4 py-2 rounded-2xl ${
+            className={`max-w-[85%] md:max-w-[70%] whitespace-pre-wrap px-4 py-3 rounded-2xl text-sm leading-relaxed shadow-sm ${
               msg.role === "user"
-                ? "bg-[#800000] text-white"
-                : "bg-white border border-gray-300 text-gray-800"
+                ? "bg-[#800000] text-white rounded-br-md"
+                : "bg-white border text-gray-800 rounded-bl-md"
             }`}
           >
             {msg.content}
           </div>
         </div>
       ))}
-      <div ref={bottomRef}></div>
+      <div ref={bottomRef} />
     </div>
   );
 }

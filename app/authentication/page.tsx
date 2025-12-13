@@ -128,6 +128,11 @@ export default function AuthenticationPage() {
       setModalMessage("Password reset link sent to your email.");
       setModalType("success");
       setModalOpen(true);
+
+      setTimeout(() => {
+        setModalOpen(false);
+        setModalMessage("");
+      }, 2500);
     } catch (err: any) {
       setModalMessage(err.message || "Failed to send password reset link.");
       setModalType("error");

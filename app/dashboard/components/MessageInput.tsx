@@ -19,19 +19,19 @@ export default function MessageInput({
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 border-t border-gray-300 bg-white flex gap-2"
+      className="p-3 border-t bg-white flex gap-2 sticky bottom-0"
     >
       <input
         type="text"
-        placeholder="Type your message..."
+        placeholder="Ask AskSorSU anything..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
-        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#800000]"
+        className="flex-1 rounded-full border px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#800000]"
       />
       <button
         type="submit"
         title="Send message"
-        className="bg-[#800000] text-white px-4 py-2 rounded-lg hover:bg-[#5a0000] transition"
+        className="bg-[#800000] text-white rounded-full p-3 hover:bg-[#5a0000]"
       >
         <Send size={18} />
       </button>
