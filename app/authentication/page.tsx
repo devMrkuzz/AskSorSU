@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { account } from "@/lib/appwrite";
+import { Databases, Permission, Role } from "appwrite";
+import client from "@/lib/appwrite";
 import { useRouter } from "next/navigation";
+
+const database = new Databases(client);
 
 // ✅ Reusable Modal Component
 function Modal({
@@ -28,7 +32,7 @@ function Modal({
       : "text-[#800000]";
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-white/40 bg-blur-sm z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50">
       <div className="bg-white rounded-xl shadow-2xl p-6 w-96 text-center border border-gray-200">
         <h2 className={`text-xl font-semibold mb-3 ${color}`}>{title}</h2>
         <p className="text-gray-700 mb-5">{message}</p>
@@ -51,21 +55,34 @@ export default function AuthenticationPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Modal State
+  // ✅ Modal State
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [modalType, setModalType] = useState<"success" | "error" | "info">(
     "info"
   );
 
-  // ✅ Automatically redirect if already logged in
+  // ✅ Disable Appwrite’s native alerts globally
+  useEffect(() => {
+    window.alert = function () {}; // prevents "ask-sor.vercel.app says" popups
+  }, []);
+
+  // ✅ Auto-close modal for success
+  useEffect(() => {
+    if (modalOpen && modalType === "success") {
+      const timer = setTimeout(() => setModalOpen(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [modalOpen, modalType]);
+
+  // ✅ Redirect if already logged in
   useEffect(() => {
     const checkSession = async () => {
       try {
         await account.getSession("current");
         router.push("/dashboard");
       } catch {
-        // no session
+        // stay on auth page
       }
     };
     checkSession();
@@ -91,18 +108,61 @@ export default function AuthenticationPage() {
     }
   };
 
-  // ✅ Registration handler
+  // ✅ Registration handler with validation and database insert
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      // Local password validation
+      if (password.length < 8 || password.length > 256) {
+        setModalMessage("Password must be between 8 and 256 characters long.");
+        setModalType("error");
+        setModalOpen(true);
+        return;
+      }
+
+      const commonPasswords = [
+        "password",
+        "12345678",
+        "qwerty",
+        "abc123",
+        "password123",
+      ];
+      if (commonPasswords.includes(password.toLowerCase())) {
+        setModalMessage("Please use a stronger password.");
+        setModalType("error");
+        setModalOpen(true);
+        return;
+      }
+
+      // Create account
       await account.create("unique()", email, password, name);
+      const user = await account.get();
+
+      // Store in Appwrite Database
+      await database.createDocument(
+        "db_asksorsu",
+        "users",
+        "unique()",
+        {
+          name: user.name,
+          email: user.email,
+          userId: user.$id,
+        },
+        [
+          Permission.read(Role.user(user.$id)),
+          Permission.update(Role.user(user.$id)),
+          Permission.delete(Role.user(user.$id)),
+        ]
+      );
+
       setModalMessage("Account created successfully! You can now log in.");
       setModalType("success");
       setModalOpen(true);
       setIsRegistering(false);
     } catch (err: any) {
+      console.error("Appwrite Error:", err);
       setModalMessage(err.message || "Failed to create account.");
       setModalType("error");
       setModalOpen(true);
@@ -128,11 +188,6 @@ export default function AuthenticationPage() {
       setModalMessage("Password reset link sent to your email.");
       setModalType("success");
       setModalOpen(true);
-
-      setTimeout(() => {
-        setModalOpen(false);
-        setModalMessage("");
-      }, 2500);
     } catch (err: any) {
       setModalMessage(err.message || "Failed to send password reset link.");
       setModalType("error");
@@ -152,6 +207,7 @@ export default function AuthenticationPage() {
     );
   };
 
+  // ✅ UI Rendering
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-white to-amber-50 text-slate-800 px-4">
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md text-center">
