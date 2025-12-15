@@ -1,23 +1,29 @@
 // scripts/importKnowledge.tsx
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+
 import fs from "fs";
 import path from "path";
-import { Client, Databases, ID } from "appwrite";
+import { Client, Databases, ID, Permission, Role } from "node-appwrite"; // ✅ USE "node-appwrite" instead of "appwrite"
 import csv from "csv-parser";
 
-// Load environment variables
-import "dotenv/config";
-
+// ✅ Initialize Appwrite client
 const client = new Client()
-  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT || "")
-  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT || "");
+  .setEndpoint(
+    process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT ||
+      "https://fra.cloud.appwrite.io/v1"
+  )
+  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT || "")
+  .setKey(process.env.APPWRITE_API_KEY || ""); // ✅ Now works on node-appwrite
 
 const databases = new Databases(client);
 
+// ✅ Read IDs from .env
 const databaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 const collectionId = process.env.NEXT_PUBLIC_APPWRITE_KNOWLEDGE_COLLECTION_ID!;
 
-// CSV file path (root of your project)
-const csvFilePath = path.join(process.cwd(), "knowledge.csv");
+// ✅ Path to your CSV file (adjust if inside /data)
+const csvFilePath = path.join(process.cwd(), "data", "knowledge_admission.csv");
 
 async function importKnowledge() {
   console.log("📂 Starting import from:", csvFilePath);
@@ -56,6 +62,7 @@ async function importKnowledge() {
   console.log("🎉 Import complete!");
 }
 
+// ✅ Run the import process
 importKnowledge().catch((err) => {
   console.error("❌ Import failed:", err);
 });
