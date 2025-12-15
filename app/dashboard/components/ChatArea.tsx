@@ -1,28 +1,9 @@
-"use client";
-import { useEffect, useRef } from "react";
+import React from "react";
 
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-  timestamp: number;
-}
-
-export default function ChatArea({
-  messages,
-  isTyping,
-}: {
-  messages: Message[];
-  isTyping: boolean;
-}) {
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
-
+export default function ChatArea({ messages, isTyping }: any) {
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-6 bg-gray-50 dark:bg-neutral-900 space-y-6">
-      {messages.map((msg, i) => (
+    <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#fffdf9]">
+      {messages.map((msg: any, i: number) => (
         <div
           key={i}
           className={`flex ${
@@ -30,29 +11,27 @@ export default function ChatArea({
           }`}
         >
           <div
-            className={`max-w-[85%] md:max-w-[70%] px-4 py-3 rounded-2xl text-sm whitespace-pre-wrap shadow ${
+            className={`max-w-[75%] p-3 rounded-2xl shadow-sm ${
               msg.role === "user"
-                ? "bg-[#800000] text-white rounded-br-md"
-                : "bg-white dark:bg-neutral-800 dark:text-white border rounded-bl-md"
+                ? "bg-[#800000] text-white rounded-br-none"
+                : "bg-gray-100 text-gray-800 rounded-bl-none"
             }`}
           >
-            {msg.content}
-            <div className="mt-1 text-[10px] opacity-60 text-right">
+            <p className="whitespace-pre-line">{msg.content}</p>
+            <span className="block text-[10px] text-gray-500 mt-1 text-right">
               {new Date(msg.timestamp).toLocaleTimeString()}
-            </div>
+            </span>
           </div>
         </div>
       ))}
 
       {isTyping && (
         <div className="flex justify-start">
-          <div className="bg-white dark:bg-neutral-800 px-4 py-2 rounded-2xl text-sm italic opacity-70">
-            AskSorSU is typing…
+          <div className="bg-gray-200 text-gray-600 rounded-2xl px-3 py-2">
+            AskSorSU is typing...
           </div>
         </div>
       )}
-
-      <div ref={bottomRef} />
     </div>
   );
 }
