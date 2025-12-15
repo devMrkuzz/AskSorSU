@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useRef, useEffect } from "react";
-import { findKnowledge } from "@/lib/knowledge"; // ✅ shared logic
+import { findKnowledge } from "@/lib/knowledge";
 
 type Message = {
   role: "user" | "assistant";
@@ -15,18 +15,17 @@ export default function DashboardPage() {
   const [isPending, startTransition] = useTransition();
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to latest message
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Show AI disclaimer message on first load
+  // Initial system message (AI disclaimer)
   useEffect(() => {
     setMessages([
       {
         role: "assistant",
         content:
-          "Hello! 👋 I’m **AskSorSU**, your Campus Assistant.\n\nPlease note: AskSorSU currently has no AI Agent yet. Some responses might be incomplete or unavailable. I can only provide information based on the data stored in my knowledge base (such as enrollment, admission, registrar, and campus details).",
+          "Hello! 👋 I’m AskSorSU, your Campus Assistant.\n\nPlease note: AskSorSU currently has no AI Agent yet. Some responses might be incomplete or unavailable. I can only provide information based on the data stored in my knowledge base. \n\n For recommendations or to report bugs, please email us at send2hire.mark@gmail.com",
         timestamp: Date.now(),
       },
     ]);
@@ -48,19 +47,16 @@ export default function DashboardPage() {
       content: question,
       timestamp: Date.now(),
     };
-
     setMessages((prev) => [...prev, userMsg]);
 
     startTransition(async () => {
       try {
         const answer = await findKnowledge(question);
-
         const botMsg: Message = {
           role: "assistant",
           content: answer,
           timestamp: Date.now(),
         };
-
         setMessages((prev) => [...prev, botMsg]);
       } catch {
         setMessages((prev) => [
@@ -83,22 +79,24 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-b from-white to-amber-50 overflow-hidden">
+    <div className="flex flex-col h-screen overflow-hidden bg-gradient-to-b from-white to-amber-50 dark:from-gray-900 dark:to-gray-950">
       {/* Header */}
-      <header className="p-4 border-b text-center text-[#800000] font-bold text-xl bg-white">
+      <header className="p-4 border-b text-center font-bold text-xl bg-white text-[#800000] dark:bg-gray-900 dark:text-amber-200 dark:border-gray-800">
         AskSorSU — Campus Assistant
       </header>
 
       {/* Quick Questions */}
-      <section className="p-4 border-b bg-white shrink-0">
-        <h2 className="font-semibold mb-2 text-[#800000]">Quick Questions</h2>
+      <section className="p-4 border-b bg-white dark:bg-gray-900 dark:border-gray-800 shrink-0">
+        <h2 className="font-semibold mb-2 text-[#800000] dark:text-amber-300">
+          Quick Questions
+        </h2>
         <div className="flex flex-wrap gap-3">
           {quickQuestions.map((q) => (
             <button
               key={q}
               onClick={() => handleAsk(q)}
               disabled={isPending}
-              className="bg-[#800000] text-white px-4 py-2 rounded-full text-sm hover:bg-[#5a0000] transition disabled:opacity-70"
+              className="bg-[#800000] text-white px-4 py-2 rounded-full text-sm hover:bg-[#5a0000] transition disabled:opacity-70 dark:bg-amber-600 dark:hover:bg-amber-500"
             >
               {q}
             </button>
@@ -107,7 +105,7 @@ export default function DashboardPage() {
       </section>
 
       {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4 dark:bg-gray-950">
         {messages.map((msg, idx) => (
           <div
             key={idx}
@@ -116,10 +114,10 @@ export default function DashboardPage() {
             }`}
           >
             <div
-              className={`max-w-[75%] p-3 rounded-2xl text-sm shadow ${
+              className={`max-w-[75%] p-3 rounded-2xl text-sm shadow transition ${
                 msg.role === "user"
-                  ? "bg-[#800000] text-white rounded-br-none"
-                  : "bg-gray-100 text-gray-800 rounded-bl-none"
+                  ? "bg-[#800000] text-white rounded-br-none dark:bg-amber-600"
+                  : "bg-gray-100 text-gray-800 rounded-bl-none dark:bg-gray-800 dark:text-gray-100"
               }`}
             >
               <p className="whitespace-pre-line">{msg.content}</p>
@@ -129,8 +127,9 @@ export default function DashboardPage() {
             </div>
           </div>
         ))}
+
         {isPending && (
-          <div className="flex justify-start text-gray-500 text-sm italic">
+          <div className="flex justify-start text-gray-500 dark:text-gray-400 text-sm italic">
             AskSorSU is typing...
           </div>
         )}
@@ -140,19 +139,19 @@ export default function DashboardPage() {
       {/* Input Bar */}
       <form
         onSubmit={handleSubmit}
-        className="p-4 border-t bg-white flex gap-3 items-center shrink-0"
+        className="p-4 border-t bg-white dark:bg-gray-900 dark:border-gray-800 flex gap-3 items-center shrink-0"
       >
         <input
           type="text"
           placeholder="Ask SorSU anything..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#800000]"
+          className="flex-1 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#800000] dark:focus:ring-amber-500"
         />
         <button
           type="submit"
           disabled={isPending}
-          className="bg-[#800000] text-white px-5 py-2 rounded-lg hover:bg-[#5a0000] transition disabled:opacity-70"
+          className="bg-[#800000] text-white px-5 py-2 rounded-lg hover:bg-[#5a0000] transition disabled:opacity-70 dark:bg-amber-600 dark:hover:bg-amber-500"
         >
           {isPending ? "..." : "Send"}
         </button>
