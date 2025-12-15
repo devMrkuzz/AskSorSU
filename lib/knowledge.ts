@@ -1,7 +1,11 @@
 "use server";
 
-import { Databases, Query } from "node-appwrite";
-import client from "@/lib/appwrite";
+import { Client, Databases, Query } from "node-appwrite";
+
+const client = new Client()
+  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT!) // public endpoint is fine
+  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT!)
+  .setKey(process.env.APPWRITE_API_KEY!); // PRIVATE key (server-only)
 
 const databases = new Databases(client);
 
