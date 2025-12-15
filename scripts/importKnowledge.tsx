@@ -23,7 +23,7 @@ const databaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 const collectionId = process.env.NEXT_PUBLIC_APPWRITE_KNOWLEDGE_COLLECTION_ID!;
 
 // ✅ Path to your CSV file (adjust if inside /data)
-const csvFilePath = path.join(process.cwd(), "data", "knowledge_general.csv");
+const csvFilePath = path.join(process.cwd(), "data", "knowledge_registrar.csv");
 
 async function importKnowledge() {
   console.log("📂 Starting import from:", csvFilePath);
