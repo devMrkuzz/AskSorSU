@@ -2,6 +2,7 @@
 
 import { useState, useTransition, useRef, useEffect } from "react";
 import { findKnowledge } from "@/lib/knowledge";
+import { ChevronDown, ChevronUp } from "lucide-react"; // <-- Add icons
 
 type Message = {
   role: "user" | "assistant";
@@ -13,14 +14,13 @@ export default function DashboardPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [showQuick, setShowQuick] = useState(true); // <-- toggle for mobile
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Initial system message
   useEffect(() => {
     setMessages([
       {
@@ -81,29 +81,43 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-b from-white to-amber-50 dark:from-gray-900 dark:to-gray-950">
-      {/* Header */}
-      <header className="p-4 border-b text-center font-bold text-xl bg-white text-[#800000] dark:bg-gray-900 dark:text-amber-200 dark:border-gray-800">
-        AskSorSU — Campus Assistant
-      </header>
-
-      {/* Quick Questions */}
-      <section className="p-4 border-b bg-white dark:bg-gray-900 dark:border-gray-800 shrink-0 overflow-x-auto scrollbar-hide">
-        <h2 className="font-semibold mb-3 text-[#800000] dark:text-amber-300">
-          Quick Questions
-        </h2>
-        <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-          {quickQuestions.map((q) => (
-            <button
-              key={q}
-              onClick={() => handleAsk(q)}
-              disabled={isPending}
-              className="bg-[#800000] text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm md:text-base font-medium hover:bg-[#5a0000] transition disabled:opacity-70 dark:bg-amber-600 dark:hover:bg-amber-500 break-words text-center whitespace-normal"
-              style={{ maxWidth: "95%" }}
-            >
-              {q}
-            </button>
-          ))}
+      {/* Quick Questions with Toggle */}
+      <section className="p-4 border-b bg-white dark:bg-gray-900 dark:border-gray-800 shrink-0">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="font-semibold text-[#800000] dark:text-amber-300">
+            Quick Questions
+          </h2>
+          <button
+            className="md:hidden flex items-center text-sm text-[#800000] dark:text-amber-400"
+            onClick={() => setShowQuick(!showQuick)}
+          >
+            {showQuick ? (
+              <>
+                Hide <ChevronUp size={16} className="ml-1" />
+              </>
+            ) : (
+              <>
+                Show <ChevronDown size={16} className="ml-1" />
+              </>
+            )}
+          </button>
         </div>
+
+        {showQuick && (
+          <div className="flex flex-wrap justify-center sm:justify-start gap-2">
+            {quickQuestions.map((q) => (
+              <button
+                key={q}
+                onClick={() => handleAsk(q)}
+                disabled={isPending}
+                className="bg-[#800000] text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm md:text-base font-medium hover:bg-[#5a0000] transition disabled:opacity-70 dark:bg-amber-600 dark:hover:bg-amber-500 break-words text-center whitespace-normal"
+                style={{ maxWidth: "95%" }}
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Chat Area */}
