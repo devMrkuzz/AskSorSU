@@ -4,21 +4,21 @@ dotenv.config({ path: ".env.local" });
 
 import fs from "fs";
 import path from "path";
-import { Client, Databases, ID, Permission, Role } from "node-appwrite"; // ✅ USE "node-appwrite" instead of "appwrite"
+import { Client, Databases, ID, Permission, Role } from "node-appwrite"; //  USE "node-appwrite" instead of "appwrite"
 import csv from "csv-parser";
 
-// ✅ Initialize Appwrite client
+//  Initialize Appwrite client
 const client = new Client()
   .setEndpoint(
     process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT ||
       "https://fra.cloud.appwrite.io/v1"
   )
   .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT || "")
-  .setKey(process.env.APPWRITE_API_KEY || ""); // ✅ Now works on node-appwrite
+  .setKey(process.env.APPWRITE_API_KEY || "");
 
 const databases = new Databases(client);
 
-// ✅ Read IDs from .env
+// Read IDs from .env
 const databaseId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
 const collectionId = process.env.NEXT_PUBLIC_APPWRITE_KNOWLEDGE_COLLECTION_ID!;
 

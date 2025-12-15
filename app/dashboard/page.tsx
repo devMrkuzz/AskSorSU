@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useRef, useEffect } from "react";
-import { findKnowledge } from "@/lib/knowledge"; // ✅ from shared lib
+import { findKnowledge } from "@/lib/knowledge"; // ✅ shared logic
 
 type Message = {
   role: "user" | "assistant";
@@ -15,10 +15,22 @@ export default function DashboardPage() {
   const [isPending, startTransition] = useTransition();
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // ✅ Auto-scroll to the bottom when new message appears
+  // Auto-scroll to latest message
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Show AI disclaimer message on first load
+  useEffect(() => {
+    setMessages([
+      {
+        role: "assistant",
+        content:
+          "Hello! 👋 I’m **AskSorSU**, your Campus Assistant.\n\nPlease note: AskSorSU currently has no AI Agent yet. Some responses might be incomplete or unavailable. I can only provide information based on the data stored in my knowledge base (such as enrollment, admission, registrar, and campus details).",
+        timestamp: Date.now(),
+      },
+    ]);
+  }, []);
 
   const quickQuestions = [
     "When is enrollment for 2026?",
@@ -77,7 +89,7 @@ export default function DashboardPage() {
         AskSorSU — Campus Assistant
       </header>
 
-      {/* Quick Question Buttons (fixed height section) */}
+      {/* Quick Questions */}
       <section className="p-4 border-b bg-white shrink-0">
         <h2 className="font-semibold mb-2 text-[#800000]">Quick Questions</h2>
         <div className="flex flex-wrap gap-3">
@@ -94,7 +106,7 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* Chat Area (scrollable) */}
+      {/* Chat Area */}
       <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
         {messages.map((msg, idx) => (
           <div
@@ -110,7 +122,7 @@ export default function DashboardPage() {
                   : "bg-gray-100 text-gray-800 rounded-bl-none"
               }`}
             >
-              {msg.content}
+              <p className="whitespace-pre-line">{msg.content}</p>
               <div className="text-[10px] mt-1 opacity-70">
                 {new Date(msg.timestamp).toLocaleTimeString()}
               </div>
@@ -125,7 +137,7 @@ export default function DashboardPage() {
         <div ref={chatEndRef} />
       </div>
 
-      {/* Input Bar (fixed bottom) */}
+      {/* Input Bar */}
       <form
         onSubmit={handleSubmit}
         className="p-4 border-t bg-white flex gap-3 items-center shrink-0"
