@@ -62,12 +62,12 @@ export default function AuthenticationPage() {
     "info"
   );
 
-  // ✅ Disable Appwrite’s native alerts globally
+  // ✅ Disable Appwrite’s native browser popups
   useEffect(() => {
-    window.alert = function () {}; // prevents "ask-sor.vercel.app says" popups
+    window.alert = function () {};
   }, []);
 
-  // ✅ Auto-close modal for success
+  // ✅ Auto-close modal after success
   useEffect(() => {
     if (modalOpen && modalType === "success") {
       const timer = setTimeout(() => setModalOpen(false), 3000);
@@ -82,7 +82,7 @@ export default function AuthenticationPage() {
         await account.getSession("current");
         router.push("/dashboard");
       } catch {
-        // stay on auth page
+        // no session, stay here
       }
     };
     checkSession();
@@ -108,7 +108,7 @@ export default function AuthenticationPage() {
     }
   };
 
-  // ✅ Registration handler with validation and database insert
+  // ✅ Registration handler (fixed “missing scopes”)
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -136,14 +136,19 @@ export default function AuthenticationPage() {
         return;
       }
 
-      // Create account
+      // 1️⃣ Create account
       await account.create("unique()", email, password, name);
+
+      // 2️⃣ Log in immediately to gain permissions
+      await account.createEmailPasswordSession(email, password);
+
+      // 3️⃣ Get authenticated ususerser
       const user = await account.get();
 
-      // Store in Appwrite Database
+      // 4️⃣ Add to Appwrite Database
       await database.createDocument(
-        "db_asksorsu",
-        "users",
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
+        process.env.NEXT_PUBLIC_APPWRITE_USERS_COLLECTION_ID!,
         "unique()",
         {
           name: user.name,
@@ -195,7 +200,7 @@ export default function AuthenticationPage() {
     }
   };
 
-  // ✅ Google Sign-In
+  // ✅ Google Sign-In handler
   const handleGoogleSignin = async () => {
     try {
       await account.deleteSession("current");
@@ -207,7 +212,7 @@ export default function AuthenticationPage() {
     );
   };
 
-  // ✅ UI Rendering
+  // ✅ UI
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-white to-amber-50 text-slate-800 px-4">
       <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-md text-center">
