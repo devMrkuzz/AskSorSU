@@ -207,8 +207,8 @@ export default function AuthenticationPage() {
     } catch {}
     account.createOAuth2Session(
       "google" as any,
-      "https://ask-sor-1i68izwp4-send2hiremark-4461s-projects.vercel.app/dashboard",
-      "https://ask-sor-1i68izwp4-send2hiremark-4461s-projects.vercel.app/authentication"
+      "http://dev-mrkuzz-7sjgtedl0-send2hiremark-4461s-projects.vercel.app/dashboard",
+      "http://dev-mrkuzz-7sjgtedl0-send2hiremark-4461s-projects.vercel.app/dashboard/authentication"
     );
   };
 
