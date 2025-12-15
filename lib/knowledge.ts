@@ -3,33 +3,42 @@
 import { Databases, Query } from "appwrite";
 import client from "@/lib/appwrite";
 
-// Initialize database instance
 const databases = new Databases(client);
 
 export async function findKnowledge(userQuestion: string) {
   try {
-    // Normalize the question to lowercase for flexible matching
+    console.log("🔍 Searching for:", userQuestion);
+
     const keywords = userQuestion.toLowerCase().split(/\s+/);
+    console.log("🧩 Keywords:", keywords);
 
-    // Build multiple keyword queries
     const queries = keywords.map((word) => Query.search("keywords", word));
+    console.log("📋 Queries built:", queries);
 
-    // Query your Appwrite knowledge table
-    const response = await databases.listDocuments(
-      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!,
-      process.env.NEXT_PUBLIC_APPWRITE_KNOWLEDGE_COLLECTION_ID!,
-      queries
-    );
+    const dbId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID!;
+    const colId = process.env.NEXT_PUBLIC_APPWRITE_KNOWLEDGE_COLLECTION_ID!;
 
-    // If results found, return the best match
+    console.log("📚 Database ID:", dbId);
+    console.log("📘 Collection ID:", colId);
+
+    const response = await databases.listDocuments(dbId, colId, queries);
+
+    console.log("✅ Raw response from Appwrite:", JSON.stringify(response, null, 2));
+
     if (response.documents.length > 0) {
+      console.log("🎯 Best match:", response.documents[0]);
       return response.documents[0].answer;
     }
 
-    // No matching knowledge found
     return "Sorry, I couldn't find any information related to your question.";
-  } catch (error: any) {
-    console.error("Error fetching knowledge:", error.message);
-    return "There was a problem accessing the knowledge base.";
+   } catch (error: any) {
+    console.error("❌ Full Appwrite error object:", JSON.stringify(error, null, 2));
+
+    if (error?.response) {
+      console.error("📩 Appwrite response error:", JSON.stringify(error.response, null, 2));
+    }
+
+    return "Sorry, something went wrong while fetching the answer.";
   }
+
 }
