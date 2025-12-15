@@ -25,7 +25,7 @@ export default function DashboardPage() {
       {
         role: "assistant",
         content:
-          "Hello! 👋 I’m AskSorSU, your Campus Assistant.\n\nPlease note: AskSorSU currently has no AI Agent yet. Some responses might be incomplete or unavailable. I can only provide information based on the data stored in my knowledge base. \n\n For recommendations or to report bugs, please email us at send2hire.mark@gmail.com",
+          "Hello! 👋 I’m AskSorSU, your Campus Assistant.\n\nPlease note: AskSorSU currently has no AI Agent yet. Some responses might be incomplete or unavailable. I can only provide information based on the data stored in my knowledge base. Also you can expected that the answer you can get from other questions are not correct, it is because I can only get the keywords for your questions. Pardon us for not accurate answers. \n\n For recommendations or to report bugs, please email us at send2hire.mark@gmail.com",
         timestamp: Date.now(),
       },
     ]);
