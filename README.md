@@ -275,17 +275,17 @@ Solution: For future enhancement, I will add Receipt for our E-commerse system w
 
 ### 17. Author
 
-Mark Julius P. Bongalbal
-Bachelor of Science in Information Technology 3-3
-Sorsogon State University
+- Mark Julius P. Bongalbal
+- Bachelor of Science in Information Technology 3-3
+- Sorsogon State University
 
-Email: send2hire.mark@gmail.com
+- Email: send2hire.mark@gmail.com
 
 ### 17.1 Partnered by
 
-Lorelyn Habal & Michaela Deticio
-Bachelor of Science in Information Technology 3-3
-Sorsogon State University
+- Lorelyn Habal & Michaela Deticio
+- Bachelor of Science in Information Technology 3-3
+- Sorsogon State University
 
 ### 18. License
 
